@@ -1565,6 +1565,12 @@ class SPURuntime:
 
         return MessageToJson(report)
 
+    def get_comm_byte_num(self):
+        return self.runtime.get_comm_byte_num()
+
+    def get_comm_latency(self):
+        return self.runtime.get_comm_latency()
+
 
 def _argnames_partial_except(fn, static_argnames, kwargs):
     if static_argnames is None:
@@ -2366,3 +2372,15 @@ class SPU(Device):
             disable_alignment,
             check_hash_digest,
         )
+
+    def get_comm_byte_nums(self):
+        byte_nums = []
+        for i, actor in enumerate(self.actors.values()):
+            byte_nums.append(sfd.get(actor.get_comm_byte_num.remote()))
+        return byte_nums
+
+    def get_comm_latencies(self):
+        latencies = []
+        for i, actor in enumerate(self.actors.values()):
+            latencies.append(sfd.get(actor.get_comm_latency.remote()))
+        return latencies
